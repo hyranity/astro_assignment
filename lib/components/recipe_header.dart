@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class RecipeHeader extends StatelessWidget implements PreferredSizeWidget {
+class RecipeHeader extends StatefulWidget implements PreferredSizeWidget {
   const RecipeHeader({
     Key? key,
     required this.title,
@@ -9,15 +10,35 @@ class RecipeHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
 
   @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  State<RecipeHeader> createState() => _RecipeHeaderState();
+}
+
+class _RecipeHeaderState extends State<RecipeHeader> {
+  @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: Text(widget.title),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(
+            Icons.shopping_cart,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            // do something
+          },
+        )
+      ],
+      titleTextStyle: GoogleFonts.poppins(
+          fontSize: 24,
+          color: Color.fromARGB(255, 90, 90, 90),
+          fontWeight: FontWeight.w600),
       elevation: 0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
     );
   }
-
-  @override
-  Size get preferredSize => new Size.fromHeight(appBar.preferredSize.height);
 }

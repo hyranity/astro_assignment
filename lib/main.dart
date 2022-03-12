@@ -1,6 +1,9 @@
+import 'package:astro_assignment/components/item_list.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'components/recipe_header.dart';
+import 'components/search_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,8 +28,11 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Menu'),
     );
   }
 }
@@ -54,14 +60,40 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RecipeHeader(title: widget.title),
-      body: Center(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+          children: [
+            SearchBar(),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Stack(
+                children: [
+                  menuBackground(),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    child: ItemList(),
+                  )
+                ],
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Positioned menuBackground() {
+    return Positioned.fill(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          decoration: const BoxDecoration(
+              color: Color(0xffB62810),
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(30),
+                  bottomRight: Radius.circular(30))),
+          width: 100,
         ),
       ),
     );
