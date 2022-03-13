@@ -1,13 +1,13 @@
 import 'package:astro_assignment/components/api/base_api.dart';
-import 'package:http/http.dart';
+import 'package:astro_assignment/models/common.dart';
 
 class MealApi extends BaseApi {
   @override
-  String BASE_URL = "www.themealdb.com/api/json/v1/1";
+  String BASE_URL = "https://www.themealdb.com/api/json/v1/1";
 
   @override
-  Future<Response> getCategories() {
-    return call("/categories.php");
+  Future getCategories<T>() {
+    return call<T>("/categories.php", Category.fromJson);
   }
 
   @override

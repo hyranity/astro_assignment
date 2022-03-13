@@ -3,6 +3,7 @@
 import 'package:astro_assignment/components/api/meal_api.dart';
 import 'package:astro_assignment/components/ui/recipe_base.dart';
 import 'package:astro_assignment/components/ui/search_bar.dart';
+import 'package:astro_assignment/models/common.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -25,28 +26,117 @@ class _HomepageState extends State<Homepage> {
 
   int selectedLocationIndex = 0;
 
+  List<Category> mealCategories = [];
+
   @override
   void initState() {
     super.initState();
 
-    print(MealApi().getCategories());
+    fetchData();
+  }
+
+  void fetchData() async {
+    mealCategories = (await MealApi().getCategories<Category>());
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return RecipeBase(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 20, bottom: 10),
-              child: deliveringLocation(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10),
+            child: deliveringLocation(),
+          ),
+          SearchBar(),
+          Container(),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+            child: categoryRow(),
+          ),
+          selectCategoryPrompt(),
+        ],
+      ),
+      title: "Good morning Akila!",
+    );
+  }
+
+  Row selectCategoryPrompt() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          height: 100,
+          width: 100,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 236, 236, 236),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Center(
+            child: Text(
+              "Select a category",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.dosis(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            SearchBar(),
-            Container(),
-          ],
+          ),
         ),
-        title: "Good morning Akila!");
+      ],
+    );
+  }
+
+  ListView categoryRow() {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemBuilder: ((context, index) {
+        Category category = mealCategories[index];
+
+        return Container(
+          margin: EdgeInsets.only(left: 20, right: 20),
+          child: Column(
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      offset: Offset(0, 4),
+                      blurRadius: 15,
+                    ),
+                  ],
+                  image: DecorationImage(
+                    image: NetworkImage(category.strCategoryThumb),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Text(
+                  category.strCategory,
+                  style: GoogleFonts.dosis(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+      separatorBuilder: ((context, index) => SizedBox(width: 5)),
+      itemCount: mealCategories.length,
+    );
   }
 
   Column deliveringLocation() {
