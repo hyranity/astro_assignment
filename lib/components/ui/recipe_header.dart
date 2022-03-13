@@ -32,7 +32,7 @@ class _RecipeHeaderState extends State<RecipeHeader> {
           },
         )
       ],
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: GoogleFonts.dosis(
           fontSize: 24,
           color: Color.fromARGB(255, 90, 90, 90),
           fontWeight: FontWeight.w600),
