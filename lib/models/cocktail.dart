@@ -1,6 +1,6 @@
 import 'package:astro_assignment/models/base_food.dart';
 
-class Meal extends BaseFood {
+class Cocktail extends BaseFood {
   @override
   String id;
 
@@ -10,17 +10,17 @@ class Meal extends BaseFood {
   @override
   String strThumb;
 
-  Meal(
+  Cocktail(
     this.id,
     this.strFood,
     this.strThumb,
   );
 
-  static Meal fromJSON(Map<String, dynamic> json) {
-    return Meal(
-      json['idMeal'],
-      json['strMeal'],
-      json['strMealThumb'],
+  static Cocktail fromJSON(Map<String, dynamic> json) {
+    return Cocktail(
+      json['idDrink'],
+      json['strDrink'],
+      json['strDrinkThumb'],
     );
   }
 }

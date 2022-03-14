@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-typedef FromJson(Map json);
+typedef FromJson(Map<String, dynamic> json);
 
 abstract class BaseApi {
   abstract String BASE_URL;
@@ -15,7 +15,7 @@ abstract class BaseApi {
       throw Exception("Failed to load data: ${response.request?.url}");
     }
 
-    final Map parsed = json.decode(response.body);
+    final Map<String, dynamic> parsed = json.decode(response.body);
 
     // Determine if the child of the first key is an array
     if (parsed.values.first is List) {
@@ -26,7 +26,7 @@ abstract class BaseApi {
     }
   }
 
-  Future getCategories<T>();
-  getPopularItems();
+  Future getCategories();
+  Future getByCategory(String category);
   getDetail(String id);
 }

@@ -1,14 +1,14 @@
 import 'package:astro_assignment/components/api/base_api.dart';
+import 'package:astro_assignment/models/cocktail.dart';
 import 'package:astro_assignment/models/common.dart';
-import 'package:astro_assignment/models/meal.dart';
 
-class MealApi extends BaseApi {
+class CocktailApi extends BaseApi {
   @override
-  String BASE_URL = "https://www.themealdb.com/api/json/v1/1";
+  String BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1";
 
   @override
   Future getCategories() {
-    return call<Category>("/categories.php", Category.fromJson);
+    return call<Category>("/list.php?c=list", Category.fromJson);
   }
 
   @override
@@ -19,6 +19,6 @@ class MealApi extends BaseApi {
 
   @override
   Future getByCategory(String category) {
-    return call<Meal>("/filter.php?c=$category", Meal.fromJSON);
+    return call<Cocktail>("/filter.php?c=$category", Cocktail.fromJSON);
   }
 }
