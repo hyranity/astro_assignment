@@ -1,3 +1,4 @@
+import 'package:astro_assignment/pages/details.dart';
 import 'package:astro_assignment/pages/homepage.dart';
 import 'package:astro_assignment/pages/main_menu.dart';
 import 'package:flutter/material.dart';
@@ -30,4 +31,5 @@ class MyApp extends StatelessWidget {
 var routes = {
   '/': (context) => const MainMenu(),
   '/homepage': (context) => const Homepage(),
+  '/details': (context) => const Details(),
 };

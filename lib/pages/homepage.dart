@@ -6,7 +6,7 @@ import 'package:astro_assignment/components/api/meal_api.dart';
 import 'package:astro_assignment/components/ui/circular_loader.dart';
 import 'package:astro_assignment/components/ui/recipe_base.dart';
 import 'package:astro_assignment/components/ui/search_bar.dart';
-import 'package:astro_assignment/models/base_food.dart';
+import 'package:astro_assignment/models/base.dart';
 import 'package:astro_assignment/models/common.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -31,7 +31,7 @@ class _HomepageState extends State<Homepage> {
   int selectedLocationIndex = 0;
 
   List<Category> mealCategories = [];
-  List<BaseFood> popularItems = [];
+  List<BaseFoodItem> popularItems = [];
 
   bool isLoadingCategories = false;
   bool isLoadingPopular = false;
@@ -44,18 +44,20 @@ class _HomepageState extends State<Homepage> {
 
     // Wait till flutter widgets done
     Future.delayed(Duration.zero, () {
-      // Once initState done
-      var type = ((ModalRoute.of(context)!.settings.arguments ??
-          <String, dynamic>{}) as Map)["title"];
-
-      if (type == "Food") {
-        api = MealApi();
-      } else {
-        api = CocktailApi();
-      }
-
+      loadApi();
       fetchCategory();
     });
+  }
+
+  void loadApi() {
+    var type = ((ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map)["title"];
+
+    if (type == "Food") {
+      api = MealApi();
+    } else {
+      api = CocktailApi();
+    }
   }
 
   void fetchCategory() async {
@@ -139,64 +141,73 @@ class _HomepageState extends State<Homepage> {
                   physics: ClampingScrollPhysics(),
                   itemCount: popularItems.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 180,
-                            width: MediaQuery.of(context).size.width,
-                            child: Image.network(
-                              popularItems[index].strThumb == ""
-                                  ? "https://picsum.photos/200/300"
-                                  : popularItems[index].strThumb,
-                              fit: BoxFit.cover,
+                    return GestureDetector(
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        '/details',
+                        arguments: <String, dynamic>{
+                          "title": "Food",
+                          "id": popularItems[index].id,
+                        },
+                      ),
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 180,
+                              width: MediaQuery.of(context).size.width,
+                              child: Image.network(
+                                popularItems[index].strThumb ??
+                                    "https://picsum.photos/200/300",
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          // Name of food
-                          Container(
-                            padding: EdgeInsets.all(15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  popularItems[index].strFood,
-                                  style: GoogleFonts.dosis(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
+                            // Name of food
+                            Container(
+                              padding: EdgeInsets.all(15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    popularItems[index].strFood ?? "",
+                                    style: GoogleFonts.dosis(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: Color(0xffA73E37),
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      generateRating(),
-                                      style: GoogleFonts.dosis(
-                                        fontSize: 15,
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
                                         color: Color(0xffA73E37),
-                                        fontWeight: FontWeight.w700,
+                                        size: 20,
                                       ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      "(${generateRatingCount()})",
-                                      style: GoogleFonts.dosis(
-                                        fontSize: 15,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w700,
+                                      Text(
+                                        generateRating(),
+                                        style: GoogleFonts.dosis(
+                                          fontSize: 15,
+                                          color: Color(0xffA73E37),
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                )
-                              ],
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "(${generateRatingCount()})",
+                                        style: GoogleFonts.dosis(
+                                          fontSize: 15,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },

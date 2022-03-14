@@ -12,13 +12,12 @@ class CocktailApi extends BaseApi {
   }
 
   @override
-  getDetail(String id) {
-    // TODO: implement getDetail
-    throw UnimplementedError();
+  Future getDetail(String id) {
+    return call<CocktailDetails>("/lookup.php?i=$id", CocktailDetails.fromJSON);
   }
 
   @override
   Future getByCategory(String category) {
-    return call<Cocktail>("/filter.php?c=$category", Cocktail.fromJSON);
+    return call<CocktailItem>("/filter.php?c=$category", CocktailItem.fromJSON);
   }
 }

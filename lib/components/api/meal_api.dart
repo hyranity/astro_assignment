@@ -12,13 +12,12 @@ class MealApi extends BaseApi {
   }
 
   @override
-  getDetail(String id) {
-    // TODO: implement getDetail
-    throw UnimplementedError();
+  Future getDetail(String id) {
+    return call<MealDetails>("/lookup.php?i=$id", MealDetails.fromJSON);
   }
 
   @override
   Future getByCategory(String category) {
-    return call<Meal>("/filter.php?c=$category", Meal.fromJSON);
+    return call<MealItem>("/filter.php?c=$category", MealItem.fromJSON);
   }
 }
