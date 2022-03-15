@@ -4,6 +4,7 @@ import 'package:astro_assignment/components/api/base_api.dart';
 import 'package:astro_assignment/components/api/cocktail_api.dart';
 import 'package:astro_assignment/components/api/meal_api.dart';
 import 'package:astro_assignment/components/ui/circular_loader.dart';
+import 'package:astro_assignment/components/ui/ingredients_panel.dart';
 import 'package:astro_assignment/components/ui/recipe_base.dart';
 import 'package:astro_assignment/models/base.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,12 @@ class _DetailsState extends State<Details> {
   Map<dynamic, dynamic> arguments = {};
 
   BaseFoodDetails? details;
+  int activeTab = 0;
   late BaseApi api;
+
+  var randomChats = Random().nextInt(100).toString();
+
+  Color get getRedColor => Color(0xffDB5E56);
 
   @override
   void initState() {
@@ -61,8 +67,8 @@ class _DetailsState extends State<Details> {
         child: details == null ? CircularLoader() : detailsScreen());
   }
 
-  Column detailsScreen() {
-    return Column(
+  Widget detailsScreen() {
+    return Stack(
       children: [
         // Image
         Container(
@@ -73,20 +79,116 @@ class _DetailsState extends State<Details> {
             fit: BoxFit.cover,
           ),
         ),
-        buttonsRow(),
-        const DefaultTabController(
-          length: 3,
-          initialIndex: 0,
-          child: TabBar(
-            labelColor: Colors.red,
-            tabs: [
-              Tab(text: "Ingredients"),
-              Tab(icon: Icon(Icons.directions_transit)),
-              Tab(icon: Icon(Icons.directions_bike)),
-            ],
+        whiteForeground()
+      ],
+    );
+  }
+
+  Container whiteForeground() {
+    return Container(
+      margin: EdgeInsets.only(top: 280),
+      padding: EdgeInsets.only(
+        top: 10,
+        left: 5,
+        right: 5,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buttonsRow(),
+          Container(
+            margin: EdgeInsets.only(top: 10, bottom: 20),
+            height: 1,
+            color: Colors.grey[300],
+          ),
+          tabRow(),
+          SizedBox(height: 20),
+          Container(
+              padding: EdgeInsets.only(left: 10, right: 10),
+              child: tabResult()),
+        ],
+      ),
+    );
+  }
+
+  Container tabRow() {
+    return Container(
+      margin: EdgeInsets.only(left: 15, right: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 14,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          buttonTab("Ingredients", 0),
+          buttonTab("Steps", 1),
+          buttonTab("Nutrition", 2),
+        ],
+      ),
+    );
+  }
+
+  Widget tabResult() {
+    if (activeTab == 0) {
+      return IngredientsPanel(details: details!);
+    } else if (activeTab == 1) {
+      return stepsTab();
+    } else {
+      return nutritionTab();
+    }
+  }
+
+  Widget stepsTab() {
+    return Container();
+  }
+
+  Widget nutritionTab() {
+    return Container();
+  }
+
+  Widget buttonTab(String data, int currentIndex) {
+    bool isActive = activeTab == currentIndex;
+
+    return Expanded(
+      child: GestureDetector(
+        // Update activeTab ontap
+        onTap: () {
+          setState(() {
+            activeTab = currentIndex;
+          });
+        },
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 100),
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: isActive ? getRedColor : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            data,
+            style: GoogleFonts.dosis(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isActive ? Colors.white : Colors.grey,
+            ),
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -98,7 +200,7 @@ class _DetailsState extends State<Details> {
           icon: Icon(Icons.chat),
           onPressed: () {},
         ),
-        Text(Random().nextInt(100).toString(),
+        Text(randomChats,
             style:
                 GoogleFonts.dosis(fontSize: 18, fontWeight: FontWeight.w600)),
         Flexible(child: Container()),
