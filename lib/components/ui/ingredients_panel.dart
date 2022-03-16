@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:astro_assignment/components/api/base_api.dart';
 import 'package:astro_assignment/models/base.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,9 +9,11 @@ class IngredientsPanel extends StatefulWidget {
   const IngredientsPanel({
     Key? key,
     required this.details,
+    required this.api,
   }) : super(key: key);
 
   final BaseFoodDetails details;
+  final BaseApi api;
 
   @override
   State<IngredientsPanel> createState() => _IngredientsPanelState();
@@ -51,7 +54,7 @@ class _IngredientsPanelState extends State<IngredientsPanel> {
               Container(
                 margin: EdgeInsets.only(right: 10),
                 child: Image.network(
-                  "https://www.themealdb.com/images/ingredients/${ingredient.replaceAll(' ', '_')}.png",
+                  widget.api.getIngredientImage(ingredient),
                   height: 60,
                   width: 60,
                   fit: BoxFit.cover,

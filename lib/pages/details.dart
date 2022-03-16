@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:astro_assignment/components/api/base_api.dart';
-import 'package:astro_assignment/components/api/cocktail_api.dart';
-import 'package:astro_assignment/components/api/meal_api.dart';
 import 'package:astro_assignment/components/ui/circular_loader.dart';
 import 'package:astro_assignment/components/ui/ingredients_panel.dart';
 import 'package:astro_assignment/components/ui/recipe_base.dart';
@@ -11,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Details extends StatefulWidget {
-  const Details({Key? key}) : super(key: key);
+  const Details({Key? key, this.apiType = "Food"}) : super(key: key);
+
+  final String apiType;
 
   @override
   State<Details> createState() => _DetailsState();
@@ -138,7 +138,7 @@ class _DetailsState extends State<Details> {
 
   Widget tabResult() {
     if (activeTab == 0) {
-      return IngredientsPanel(details: details!);
+      return IngredientsPanel(details: details!, api: api);
     } else if (activeTab == 1) {
       return stepsTab();
     } else {
