@@ -53,11 +53,7 @@ class _HomepageState extends State<Homepage> {
     var type = ((ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map)["title"];
 
-    if (type == "Food") {
-      api = MealApi();
-    } else {
-      api = CocktailApi();
-    }
+    api = BaseApi.getApi(type);
   }
 
   void fetchCategory() async {

@@ -44,13 +44,7 @@ class _DetailsState extends State<Details> {
   }
 
   void loadApi() {
-    var type = arguments["title"];
-
-    if (type == "Food") {
-      api = MealApi();
-    } else {
-      api = CocktailApi();
-    }
+    api = BaseApi.getApi(arguments["title"]);
   }
 
   void fetchDetails() async {

@@ -1,11 +1,26 @@
 import 'dart:convert';
 
+import 'package:astro_assignment/components/api/cocktail_api.dart';
+import 'package:astro_assignment/components/api/meal_api.dart';
 import 'package:http/http.dart';
 
 typedef FromJson(Map<String, dynamic> json);
 
 abstract class BaseApi {
   abstract String BASE_URL;
+
+  // A method to generate Api based on type of recipe (eg. Food or Beverage)
+  // Supports dynamic type of recipe
+  static BaseApi getApi(String type) {
+    // Maps type to API
+    var apiTypes = {
+      "Food": MealApi(),
+      "Beverage": CocktailApi(),
+    };
+
+    // Return the api based on type if exists, defaults to MealApi
+    return apiTypes[type] ?? MealApi();
+  }
 
   Future call<T>(String url, FromJson fromJson) async {
     var response = await get(Uri.parse("${BASE_URL}/${url}"));
@@ -26,6 +41,11 @@ abstract class BaseApi {
     }
   }
 
+  String getIngredientImage(String ingredient) {
+    return "$BASE_URL/images/ingredients/${ingredient.replaceAll(' ', '_')}.png";
+  }
+
+  // Methods to be implemented by child classes
   Future getCategories();
   Future getByCategory(String category);
   getDetail(String id);
