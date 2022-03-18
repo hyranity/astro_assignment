@@ -112,14 +112,23 @@ class _IngredientsPanelState extends State<IngredientsPanel> {
   }
 
   String getIngredientCount(int index) {
-    String measure = widget.details.strMeasureList[index];
+    String? measure = null;
+    try {
+      measure = widget.details.strMeasureList[index];
+    } catch (e) {
+      print("Measure not found");
+    }
 
     if (measure == null) {
       return "-";
     }
 
+    // extract number number/number unit
+    final RegExp regExp = RegExp(r"(\d+) (\d+)/(\d+) (\w+)");
+    final complexMatch = regExp.firstMatch(measure);
+
     // Convert fractions to decimal (eg. 1/2 oz, 1 /2 oz) and set to measure
-    if (measure.contains("/")) {
+    if (measure.contains("/") && complexMatch == null) {
       List<String> fraction = measure.split("/");
       String unit = fraction[1].split(" ")[1];
       double decimal =
@@ -137,11 +146,27 @@ class _IngredientsPanelState extends State<IngredientsPanel> {
       // Separate the measure into the number and the unit
       // Note that some measures have a space, e.g. "1 cups", and some don't, e.g. "2tbsp"
 
+      if (complexMatch != null) {
+        // Convert to decimal
+        final num whole = int.parse(complexMatch.group(1) ?? "0");
+        final num numerator = double.parse(complexMatch.group(2) ?? "0");
+        final num denominator = double.parse(complexMatch.group(3) ?? "0");
+
+        // Combine whole, numerator and denominator
+        number = (whole + (numerator / denominator));
+        unit = complexMatch.group(4) ?? "-";
+      }
       // If space, separated unit and number by space
-      if (measure.contains(" ")) {
+      else if (measure.contains(" ")) {
         measureSplit = measure.split(" ");
         unit = measureSplit[1];
-        number = double.tryParse(measureSplit[0]) ?? 0;
+
+        // If number contains - (e.g 1-2 cups), we just take the first number
+        if (measureSplit[0].contains("-")) {
+          number = double.tryParse(measureSplit[0].split("-")[0]) ?? 0;
+        } else {
+          number = double.tryParse(measureSplit[0]) ?? 0;
+        }
       }
       // If contains both number and letter
       else if (RegExp(r'\d').hasMatch(measure) &&
