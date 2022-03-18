@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:astro_assignment/components/api/base_api.dart';
-import 'package:astro_assignment/components/api/cocktail_api.dart';
-import 'package:astro_assignment/components/api/meal_api.dart';
 import 'package:astro_assignment/components/ui/circular_loader.dart';
 import 'package:astro_assignment/components/ui/ingredients_panel.dart';
 import 'package:astro_assignment/components/ui/recipe_base.dart';
@@ -20,20 +18,24 @@ class Details extends StatefulWidget {
 class _DetailsState extends State<Details> {
   Map<dynamic, dynamic> arguments = {};
 
-  BaseFoodDetails? details;
   int activeTab = 0;
-  late BaseApi api;
+  static BaseFoodDetails? details;
+  static late BaseApi api;
 
   var randomChats = Random().nextInt(100).toString();
 
   Color get getRedColor => Color(0xffDB5E56);
+
+  BaseApi get apiToBeUsed => BaseApi.getApi(arguments["title"]);
+
+  // Static values to support caching
+  static String id = "";
 
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       loadArguments();
-      loadApi();
       fetchDetails();
     });
   }
@@ -43,12 +45,20 @@ class _DetailsState extends State<Details> {
         <String, dynamic>{}) as Map);
   }
 
-  void loadApi() {
-    api = BaseApi.getApi(arguments["title"]);
-  }
-
   void fetchDetails() async {
-    var id = arguments["id"];
+    var newId = arguments['id'];
+    if (newId == id && apiToBeUsed.runtimeType == api.runtimeType) {
+      // Using same API and same ID
+      return;
+    }
+
+    // Else
+    setState(() {
+      details = null;
+      id = newId;
+      api = apiToBeUsed;
+    });
+
     var data = await api.getDetail(id);
     setState(() {
       // If data is a list, get the first item, otherwise just use the data
@@ -181,6 +191,11 @@ class _DetailsState extends State<Details> {
     // If the instructions is empty string, remove it
     instructions = instructions.where((element) => element != "").toList();
 
+    // If no instructions, use placeholderWidget
+    if (instructions.isEmpty) {
+      return placeholderWidget("No steps found");
+    }
+
     return Container(
       margin: EdgeInsets.all(10),
       child: Column(
@@ -198,19 +213,23 @@ class _DetailsState extends State<Details> {
                   width: MediaQuery.of(context).size.width,
                   child: Row(
                     children: [
+                      // Step number
                       Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        child: const Icon(
-                          Icons.fiber_manual_record,
-                          size: 10,
-                          color: Colors.grey,
+                        margin: EdgeInsets.only(right: 10),
+                        child: Text(
+                          "${index + 1}.",
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       Flexible(
                         child: Text(
                           instructions[index].trim(),
                           style: GoogleFonts.dosis(
-                            fontSize: 20,
+                            fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -227,13 +246,17 @@ class _DetailsState extends State<Details> {
   }
 
   Widget nutritionTab() {
+    return placeholderWidget("Coming soon");
+  }
+
+  Center placeholderWidget(String text) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Coming soon",
+            text,
             style: GoogleFonts.dosis(
               fontSize: 30,
               fontWeight: FontWeight.w800,
