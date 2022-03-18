@@ -4,7 +4,7 @@ import 'package:astro_assignment/models/meal.dart';
 
 class MealApi extends BaseApi {
   @override
-  String BASE_URL = "https://www.themealdb.com/api/json/v1/1";
+  String BASE_URL = "https://www.themealdb.com";
 
   @override
   Future getCategories() {

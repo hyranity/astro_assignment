@@ -4,7 +4,7 @@ import 'package:astro_assignment/models/common.dart';
 
 class CocktailApi extends BaseApi {
   @override
-  String BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1";
+  String BASE_URL = "https://www.thecocktaildb.com";
 
   @override
   Future getCategories() {

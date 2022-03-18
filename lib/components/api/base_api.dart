@@ -23,7 +23,7 @@ abstract class BaseApi {
   }
 
   Future call<T>(String url, FromJson fromJson) async {
-    var response = await get(Uri.parse("${BASE_URL}/${url}"));
+    var response = await get(Uri.parse("${BASE_URL}/api/json/v1/1/${url}"));
 
     // Throw error if response failed
     if (response.statusCode != 200) {

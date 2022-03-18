@@ -166,7 +166,7 @@ class _DetailsState extends State<Details> {
 
   Widget tabResult() {
     if (activeTab == 0) {
-      return IngredientsPanel(details: details!);
+      return IngredientsPanel(details: details!, api: api);
     } else if (activeTab == 1) {
       return stepsTab();
     } else {
@@ -176,6 +176,11 @@ class _DetailsState extends State<Details> {
 
   Widget stepsTab() {
     // Get steps from details, show in container
+    var instructions = details!.strInstructions!.split(".");
+
+    // If the instructions is empty string, remove it
+    instructions = instructions.where((element) => element != "").toList();
+
     return Container(
       margin: EdgeInsets.all(10),
       child: Column(
@@ -186,7 +191,7 @@ class _DetailsState extends State<Details> {
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: details!.strInstructions!.split(".").length,
+              itemCount: instructions.length,
               itemBuilder: (context, index) {
                 return Container(
                   margin: EdgeInsets.only(bottom: 10),
@@ -203,7 +208,7 @@ class _DetailsState extends State<Details> {
                       ),
                       Flexible(
                         child: Text(
-                          details!.strInstructions!.split(".")[index].trim(),
+                          instructions[index].trim(),
                           style: GoogleFonts.dosis(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
