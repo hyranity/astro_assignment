@@ -36,6 +36,8 @@ class _HomepageState extends State<Homepage> {
   bool isLoadingCategories = false;
   bool isLoadingPopular = false;
 
+  String type = "";
+
   late BaseApi api;
 
   @override
@@ -50,10 +52,11 @@ class _HomepageState extends State<Homepage> {
   }
 
   void loadApi() {
-    var type = ((ModalRoute.of(context)!.settings.arguments ??
-        <String, dynamic>{}) as Map)["title"];
+    type = ((ModalRoute.of(context)!.settings.arguments ?? <String, dynamic>{})
+        as Map)["title"];
 
     api = BaseApi.getApi(type);
+    setState(() {});
   }
 
   void fetchCategory() async {
@@ -142,7 +145,7 @@ class _HomepageState extends State<Homepage> {
                         context,
                         '/details',
                         arguments: <String, dynamic>{
-                          "title": "Food",
+                          "title": type,
                           "id": popularItems[index].id,
                         },
                       ),

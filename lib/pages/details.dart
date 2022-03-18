@@ -51,28 +51,56 @@ class _DetailsState extends State<Details> {
     var id = arguments["id"];
     var data = await api.getDetail(id);
     setState(() {
-      details = data[0];
+      // If data is a list, get the first item, otherwise just use the data
+      details = data is List ? data.first : data;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return RecipeBase(
-        child: details == null ? CircularLoader() : detailsScreen());
+        child: details == null
+            ? const CircularLoader(fullscreen: true)
+            : detailsScreen());
   }
 
   Widget detailsScreen() {
     return Stack(
       children: [
-        // Image
-        Container(
-          height: 300,
-          width: double.infinity,
-          child: Image.network(
-            details!.strFoodThumb ?? "",
-            fit: BoxFit.cover,
-          ),
+        // Image section
+        Stack(
+          children: [
+            Container(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                details!.strFoodThumb ?? "https://picsum.photos/200/300",
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned(
+              bottom: 50,
+              left: 10,
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: getRedColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.play_arrow,
+                    size: 40,
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ],
         ),
+
         whiteForeground()
       ],
     );
@@ -120,7 +148,7 @@ class _DetailsState extends State<Details> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withOpacity(0),
             blurRadius: 14,
             offset: Offset(0, 5),
           ),
@@ -147,11 +175,69 @@ class _DetailsState extends State<Details> {
   }
 
   Widget stepsTab() {
-    return Container();
+    // Get steps from details, show in container
+    return Container(
+      margin: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: details!.strInstructions!.split(".").length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        child: const Icon(
+                          Icons.fiber_manual_record,
+                          size: 10,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          details!.strInstructions!.split(".")[index].trim(),
+                          style: GoogleFonts.dosis(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget nutritionTab() {
-    return Container();
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Coming soon",
+            style: GoogleFonts.dosis(
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buttonTab(String data, int currentIndex) {
@@ -172,6 +258,16 @@ class _DetailsState extends State<Details> {
           decoration: BoxDecoration(
             color: isActive ? getRedColor : Colors.white,
             borderRadius: BorderRadius.circular(10),
+            // Add box shadow if active
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: getRedColor.withOpacity(0.5),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ]
+                : [],
           ),
           child: Text(
             data,

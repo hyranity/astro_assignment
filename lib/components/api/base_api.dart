@@ -15,7 +15,7 @@ abstract class BaseApi {
     // Maps type to API
     var apiTypes = {
       "Food": MealApi(),
-      "Beverage": CocktailApi(),
+      "Beverages": CocktailApi(),
     };
 
     // Return the api based on type if exists, defaults to MealApi
